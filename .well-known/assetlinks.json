@@ -1,1 +1,8 @@
-()
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "es.aldaron.es",
+    "sha256_cert_fingerprints": ["34:DB:E1:22:C7:2F:A7:60:3F:5C:58:7B:FB:7D:BC:8D:61:BC:16:4F:E2:1C:E1:E7:9E:17:B0:F8:63:18:DF:18"]
+  }
+}]
