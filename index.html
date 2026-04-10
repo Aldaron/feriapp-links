@@ -6,22 +6,97 @@
     
     <meta property="og:title" content="Descarga FeriApp 💃">
     <meta property="og:description" content="La biblioteca definitiva de sevillanas para tu bolsillo. Letras, Spotify, favoritos y mucho más.">
-    <title>FeriApp - Redirigiendo...</title>
+    
+    <title>FeriApp - Tu guía de Sevillanas</title>
+    
+    <meta http-equiv="refresh" content="2; url=https://play.google.com/store/apps/details?id=es.aldaron.feriapp&hl=es">
+    
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #fdf2f2;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+        .container {
+            max-width: 500px;
+            padding: 20px;
+        }
+        .logo {
+            font-size: 4.5rem;
+            margin-bottom: 15px;
+        }
+        h1 {
+            color: #d32f2f;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #555;
+        }
+        .highlight {
+            color: #2e7d32; /* Verde andaluz para resaltar */
+            font-weight: bold;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #d32f2f;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            animation: spin 1s linear infinite;
+            margin: 25px auto 15px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 14px 35px;
+            background-color: #d32f2f;
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(211, 47, 47, 0.3);
+        }
+        .btn:hover { 
+            transform: scale(1.05); 
+            background-color: #b71c1c; 
+            box-shadow: 0 6px 12px rgba(211, 47, 47, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">💃</div>
+        <h1>Llevándote a la Feria...</h1>
+        <p>Prepara el bolsillo, porque estás a punto de descargar la <span class="highlight">biblioteca definitiva</span> de sevillanas.</p>
+        <p>Letras, acordes, listas de favoritos y mucho más.</p>
+        
+        <div class="loader"></div>
+        <p style="font-size: 0.9rem; color: #888; margin-top: 0;">Redirigiéndote a Google Play...</p>
+
+        <a href="https://play.google.com/store/apps/details?id=es.aldaron.feriapp&hl=es" class="btn">DESCARGAR FERIAPP</a>
+    </div>
 
     <script>
-        // En el futuro, aquí puedes poner un "if" para detectar si es iPhone o Android.
-        // Por ahora, lo mandamos directo a Google Play.
-        window.location.replace("https://play.google.com/store/apps/details?id=es.aldaron.feriapp&hl=es");
+        // Fallback: Si falla la redirección HTML, el JS lo fuerza a los 4 segundos
+        setTimeout(function() {
+            window.location.replace("https://play.google.com/store/apps/details?id=es.aldaron.feriapp&hl=es");
+        }, 4000);
     </script>
-</head>
-<body style="font-family: Arial, sans-serif; text-align: center; padding: 50px; background-color: #ffe5da;">
-    
-    <h2>💃 Llevándote a la Feria...</h2>
-    <p>Si no te redirige automáticamente en unos segundos, 
-       <a href="https://play.google.com/store/apps/details?id=es.aldaron.feriapp&hl=es" style="color: #d12027; font-weight: bold;">
-       pulsa aquí para descargar FeriApp
-       </a>.
-    </p>
-
 </body>
 </html>
