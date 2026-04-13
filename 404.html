@@ -3,97 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FeriApp - Contenido Compartido</title>
-    
-    <meta http-equiv="refresh" content="2; url=https://play.google.com/store/apps/details?id=es.aldaron.feriapp&hl=es">
-    
+    <title>FeriApp - Redirigiendo...</title>
     <style>
-        /* Exactamente los mismos estilos del index para mantener coherencia total */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #fdf2f2;
-            color: #333;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            text-align: center;
-        }
-        .container {
-            max-width: 500px;
-            padding: 20px;
-        }
-        .logo {
-            font-size: 4.5rem;
-            margin-bottom: 15px;
-        }
-        h1 {
-            color: #d32f2f;
-            font-size: 2.2rem;
-            margin-bottom: 10px;
-        }
-        p {
-            font-size: 1.1rem;
-            line-height: 1.6;
-            color: #555;
-        }
-        .highlight {
-            color: #2e7d32;
-            font-weight: bold;
-        }
-        .loader {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #d32f2f;
-            border-radius: 50%;
-            width: 35px;
-            height: 35px;
-            animation: spin 1s linear infinite;
-            margin: 25px auto 15px auto;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .btn {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 14px 35px;
-            background-color: #d32f2f;
-            color: white;
-            text-decoration: none;
-            border-radius: 30px;
-            font-weight: bold;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 6px rgba(211, 47, 47, 0.3);
-        }
-        .btn:hover { 
-            transform: scale(1.05); 
-            background-color: #b71c1c; 
-            box-shadow: 0 6px 12px rgba(211, 47, 47, 0.4);
-        }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #fdf2f2; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; text-align: center; }
+        .container { max-width: 450px; padding: 20px; }
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #d32f2f; border-radius: 50%; width: 35px; height: 35px; animation: spin 1s linear infinite; margin: 20px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .btn { display: none; margin-top: 20px; padding: 12px 25px; background-color: #d32f2f; color: white; text-decoration: none; border-radius: 25px; font-weight: bold; }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="logo">📱</div>
-        <h1>¡Ya casi estamos!</h1>
-        <p>Estás intentando abrir un <span class="highlight">contenido exclusivo</span> de FeriApp que han compartido contigo.</p>
-        <p>Para no perderte ni un compás, instala nuestra aplicación gratuita.</p>
-        
+        <div style="font-size: 4rem;">💃</div>
+        <h1 style="color: #d32f2f; font-size: 1.8rem;">Abriendo FeriApp...</h1>
+        <p id="status-text">Buscando la letra en la biblioteca...</p>
         <div class="loader"></div>
-        <p style="font-size: 0.9rem; color: #888; margin-top: 0;">Redirigiéndote a Google Play...</p>
-
-        <a href="https://play.google.com/store/apps/details?id=es.aldaron.feriapp&hl=es" class="btn">INSTALAR FERIAPP</a>
+        <a id="btn-manual" href="#" class="btn">ENTRAR MANUALMENTE</a>
     </div>
 
     <script>
-        // Fallback: Si falla la redirección HTML, el JS lo fuerza a los 4 segundos
-        setTimeout(function() {
-            window.location.replace("https://play.google.com/store/apps/details?id=es.aldaron.feriapp&hl=es");
-        }, 10000);
+        (function() {
+            const URL_RASPBERRY = "https://feria.aldaron.es";
+            const URL_PLAYSTORE = "https://play.google.com/store/apps/details?id=es.aldaron.feriapp";
+            
+            const path = window.location.pathname;
+            const isAndroid = /android/i.test(navigator.userAgent);
+            
+            let destinoFinal = URL_RASPBERRY;
+
+            // 1. Identificar el contenido (Sevillana o Favoritos)
+            if (path.includes('/s/')) {
+                const mascara = path.split('/s/')[1];
+                // Redirigimos al método que decodifica en la Raspberry
+                destinoFinal = `${URL_RASPBERRY}/Home/DetallePorMascara?m=${mascara}`;
+            } 
+            else if (path.includes('/f/')) {
+                const mascara = path.split('/f/')[1];
+                destinoFinal = `${URL_RASPBERRY}/Home/FavoritosCompartidos?m=${mascara}`;
+            } 
+            else {
+                // Si es la raíz o una ruta desconocida:
+                // SOLO si es Android mandamos a la Store. 
+                // Para TODO lo demás (iOS, PC, Mac), mandamos al Index de la Web.
+                destinoFinal = isAndroid ? URL_PLAYSTORE : URL_RASPBERRY;
+            }
+
+            // 2. Intentar redirección automática
+            window.location.replace(destinoFinal);
+
+            // 3. Botón de auxilio si falla el auto-redirect o la Raspberry tarda
+            setTimeout(() => {
+                document.getElementById('status-text').innerText = "Si no has entrado ya, pulsa el botón:";
+                const btn = document.getElementById('btn-manual');
+                btn.href = destinoFinal;
+                btn.style.display = "inline-block";
+            }, 4000);
+        })();
     </script>
 </body>
 </html>
