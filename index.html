@@ -89,25 +89,31 @@
         <a id="action-btn" href="#" class="btn">ENTRAR</a>
     </div>
 
-    <script>
+  <script>
         (function() {
-            const URL_RASPBERRY = "https://feria.aldaron.es";
+            const URL_WEB_BASE = "https://feria.aldaron.es";
             const URL_PLAYSTORE = "https://play.google.com/store/apps/details?id=es.aldaron.feriapp&hl=es";
+            
+            // MAGIA: Capturamos lo que viene después del .es (ej: /s/123 o /f/MTAt)
+            const rutaCompartida = window.location.pathname + window.location.search;
             
             const isAndroid = /android/i.test(navigator.userAgent);
             const actionBtn = document.getElementById('action-btn');
             const redirectText = document.getElementById('redirect-text');
             
-            let destino = URL_RASPBERRY;
+            let destino = "";
 
             if (isAndroid) {
-                // Si es Android, promocionamos la descarga de la App
-                destino = URL_PLAYSTORE;
+                // Si es Android, lo mandamos a la tienda. 
+                // Añadimos el referrer por si en el futuro quieres que la app lea qué enlace lo llevó a instalarse.
+                destino = URL_PLAYSTORE + "&referrer=" + encodeURIComponent(rutaCompartida);
+                
                 redirectText.innerText = "Redirigiéndote a Google Play...";
                 actionBtn.innerText = "DESCARGAR FERIAPP";
             } else {
-                // Para el resto (iOS, PC, Mac), mandamos directamente al clon web
-                destino = URL_RASPBERRY;
+                // Si es iOS o PC, lo mandamos al clon web PERO manteniendo la canción exacta
+                destino = URL_WEB_BASE + rutaCompartida;
+                
                 redirectText.innerText = "Abriendo versión web...";
                 actionBtn.innerText = "ENTRAR A FERIAPP WEB";
             }
@@ -115,7 +121,7 @@
             // Redirección automática
             window.location.replace(destino);
 
-            // Fallback: mostrar botón si la redirección automática tarda mucho
+            // Fallback: mostrar botón si la redirección automática tarda o el navegador la bloquea
             setTimeout(function() {
                 actionBtn.href = destino;
                 actionBtn.style.display = "inline-block";
