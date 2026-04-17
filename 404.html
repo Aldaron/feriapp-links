@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <meta property="og:title" content="FeriApp 💃">
+    <meta property="og:description" content="La biblioteca definitiva de sevillanas para tu bolsillo. Letras, Spotify, favoritos y mucho más.">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FeriApp - Redirigiendo...</title>
@@ -21,43 +23,51 @@
         <a id="btn-manual" href="#" class="btn">ENTRAR MANUALMENTE</a>
     </div>
 
-    <script>
+   <script>
         (function() {
             const URL_RASPBERRY = "https://feria.aldaron.es";
             const URL_PLAYSTORE = "https://play.google.com/store/apps/details?id=es.aldaron.feriapp";
             
             const path = window.location.pathname;
+            const search = window.location.search; // Pillamos también parámetros si los hubiera
             const isAndroid = /android/i.test(navigator.userAgent);
             
-            let destinoFinal = URL_RASPBERRY;
+            let destinoFinal = "";
 
-            // 1. Identificar el contenido (Sevillana o Favoritos)
-            if (path.includes('/s/')) {
-                const mascara = path.split('/s/')[1];
-                // Redirigimos al método que decodifica en la Raspberry
-                destinoFinal = `${URL_RASPBERRY}/Home/DetallePorMascara?m=${mascara}`;
-            } 
-            else if (path.includes('/f/')) {
-                const mascara = path.split('/f/')[1];
-                destinoFinal = `${URL_RASPBERRY}/Home/FavoritosCompartidos?m=${mascara}`;
+            if (isAndroid) {
+                // 1. SI ES ANDROID: Siempre a la tienda.
+                destinoFinal = URL_PLAYSTORE + "&referrer=" + encodeURIComponent(path + search);
             } 
             else {
-                // Si es la raíz o una ruta desconocida:
-                // SOLO si es Android mandamos a la Store. 
-                // Para TODO lo demás (iOS, PC, Mac), mandamos al Index de la Web.
-                destinoFinal = isAndroid ? URL_PLAYSTORE : URL_RASPBERRY;
+                // 2. SI ES IOS / PC: Comprobamos qué nos han compartido
+                if (path.includes('/s/')) {
+                    const mascara = path.split('/s/')[1].replace('/', '');
+                    destinoFinal = `${URL_RASPBERRY}/Home/DetallePorMascara?m=${mascara}`;
+                } 
+                else if (path.includes('/f/')) {
+                    const mascara = path.split('/f/')[1].replace('/', '');
+                    destinoFinal = `${URL_RASPBERRY}/Home/FavoritosCompartidos?m=${mascara}`;
+                } 
+                else {
+                    // Raíz o desconocido
+                    destinoFinal = URL_RASPBERRY;
+                }
             }
 
-            // 2. Intentar redirección automática
+            // Redirección automática
             window.location.replace(destinoFinal);
 
-            // 3. Botón de auxilio si falla el auto-redirect o la Raspberry tarda
+            // Botón de auxilio
             setTimeout(() => {
-                document.getElementById('status-text').innerText = "Si no has entrado ya, pulsa el botón:";
+                document.getElementById('status-text').innerText = isAndroid 
+                    ? "Si no se abre la tienda, pulsa aquí:" 
+                    : "Si no has entrado ya, pulsa el botón:";
+                
                 const btn = document.getElementById('btn-manual');
+                btn.innerText = isAndroid ? "DESCARGAR APP" : "ENTRAR MANUALMENTE";
                 btn.href = destinoFinal;
                 btn.style.display = "inline-block";
-            }, 4000);
+            }, 3000);
         })();
     </script>
 </body>
