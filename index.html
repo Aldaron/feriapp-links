@@ -80,51 +80,60 @@
 <body>
     <div class="container">
         <div class="logo">💃</div>
-        <h1 id="main-title">Llevándote a la Feria...</h1>
-        <p id="main-desc">Estás a punto de entrar en la <span class="highlight">biblioteca definitiva</span> de sevillanas.</p>
+        <h1 id="main-title">Abriendo FeriApp...</h1>
+        <p id="main-desc" style="font-size: 1rem; color: #888;">Buscando la letra en la biblioteca...</p>
         
         <div class="loader"></div>
-        <p id="redirect-text" style="font-size: 0.9rem; color: #888; margin-top: 0;">Redirigiéndote...</p>
+        <p id="status-text" style="font-size: 0.9rem; color: #888; margin-top: 0;"></p>
 
-        <a id="action-btn" href="#" class="btn">ENTRAR</a>
+        <a id="btn-manual" href="#" class="btn">ENTRAR MANUALMENTE</a>
     </div>
 
-  <script>
+   <script>
         (function() {
-            const URL_WEB_BASE = "https://feria.aldaron.es";
-            const URL_PLAYSTORE = "https://play.google.com/store/apps/details?id=es.aldaron.feriapp&hl=es";
+            const URL_RASPBERRY = "https://feria.aldaron.es";
+            const URL_PLAYSTORE = "https://play.google.com/store/apps/details?id=es.aldaron.feriapp";
             
-            // MAGIA: Capturamos lo que viene después del .es (ej: /s/123 o /f/MTAt)
-            const rutaCompartida = window.location.pathname + window.location.search;
-            
+            const path = window.location.pathname;
+            const search = window.location.search; // Pillamos también parámetros si los hubiera
             const isAndroid = /android/i.test(navigator.userAgent);
-            const actionBtn = document.getElementById('action-btn');
-            const redirectText = document.getElementById('redirect-text');
             
-            let destino = "";
+            let destinoFinal = "";
 
             if (isAndroid) {
-                // Si es Android, lo mandamos a la tienda. 
-                // Añadimos el referrer por si en el futuro quieres que la app lea qué enlace lo llevó a instalarse.
-                destino = URL_PLAYSTORE + "&referrer=" + encodeURIComponent(rutaCompartida);
-                
-                redirectText.innerText = "Redirigiéndote a Google Play...";
-                actionBtn.innerText = "DESCARGAR FERIAPP";
-            } else {
-                // Si es iOS o PC, lo mandamos al clon web PERO manteniendo la canción exacta
-                destino = URL_WEB_BASE + rutaCompartida;
-                
-                redirectText.innerText = "Abriendo versión web...";
-                actionBtn.innerText = "ENTRAR A FERIAPP WEB";
+                // 1. SI ES ANDROID: Siempre a la tienda.
+                // Le añadimos la ruta en el referrer por si luego quieres saber de dónde venía.
+                destinoFinal = URL_PLAYSTORE + "&referrer=" + encodeURIComponent(path + search);
+            } 
+            else {
+                // 2. SI ES IOS / PC: Traducimos la URL corta a la URL que entiende tu servidor (C# MVC)
+                if (path.includes('/s/')) {
+                    const mascara = path.split('/s/')[1].replace('/', '');
+                    destinoFinal = `${URL_RASPBERRY}/Home/DetallePorMascara?m=${mascara}`;
+                } 
+                else if (path.includes('/f/')) {
+                    const mascara = path.split('/f/')[1].replace('/', '');
+                    destinoFinal = `${URL_RASPBERRY}/Home/FavoritosCompartidos?m=${mascara}`;
+                } 
+                else {
+                    // Raíz o desconocido
+                    destinoFinal = URL_RASPBERRY;
+                }
             }
 
-            // Redirección automática
-            window.location.replace(destino);
+            // Redirección automática inmediata
+            window.location.replace(destinoFinal);
 
-            // Fallback: mostrar botón si la redirección automática tarda o el navegador la bloquea
-            setTimeout(function() {
-                actionBtn.href = destino;
-                actionBtn.style.display = "inline-block";
+            // Botón de auxilio por si el navegador bloquea el auto-redirect
+            setTimeout(() => {
+                document.getElementById('status-text').innerText = isAndroid 
+                    ? "Si no se abre la tienda, pulsa aquí:" 
+                    : "Si no has entrado ya, pulsa el botón:";
+                
+                const btn = document.getElementById('btn-manual');
+                btn.innerText = isAndroid ? "DESCARGAR APP" : "ENTRAR A FERIAPP WEB";
+                btn.href = destinoFinal;
+                btn.style.display = "inline-block";
             }, 3000);
         })();
     </script>
